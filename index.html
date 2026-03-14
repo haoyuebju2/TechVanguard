@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数码新品参数时间线</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#8b5cf6',
+                        accent: '#ec4899',
+                        neutral: '#1f2937',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .timeline-line {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 0;
+                transform: translateX(-50%);
+                width: 4px;
+                height: 100%;
+                background: linear-gradient(to bottom, #3b82f6 0%, #8b5cf6 100%);
+            }
+            .timeline-dot {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: white;
+                border: 4px solid #3b82f6;
+                z-index: 10;
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            .category-badge {
+                @apply px-3 py-1 rounded-full text-xs font-semibold;
+            }
+            .phone-badge {
+                @apply bg-blue-100 text-blue-800;
+            }
+            .laptop-badge {
+                @apply bg-purple-100 text-purple-800;
+            }
+            .tablet-badge {
+                @apply bg-green-100 text-green-800;
+            }
+            .peripheral-badge {
+                @apply bg-orange-100 text-orange-800;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fa fa-microchip text-primary text-3xl"></i>
+                    <h1 class="text-3xl font-bold text-neutral">数码新品参数时间线</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="all">全部品类</option>
+                        <option value="phone">手机</option>
+                        <option value="laptop">笔记本电脑</option>
+                        <option value="tablet">平板</option>
+                        <option value="peripheral">外设</option>
+                    </select>
+                    <select id="dateFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="all">全部日期</option>
+                        <option value="2026-03-14">2026-03-14</option>
+                    </select>
+                </div>
+            </div>
+            <p class="text-gray-600 mt-2">每日更新最新数码产品发布信息，包含手机、电脑、平板、外设等全品类参数</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">今日新品总数</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="totalCount">10</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-calendar-check-o text-primary text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">手机类</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="phoneCount">3</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-mobile text-blue-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">电脑/平板类</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="laptopCount">3</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-laptop text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">外设类</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="peripheralCount">4</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-keyboard-o text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="relative">
+            <div class="timeline-line"></div>
+            
+            <!-- 2026-03-14 -->
+            <div class="mb-16">
+                <!-- Date Marker -->
+                <div class="relative mb-12">
+                    <div class="timeline-dot"></div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 -top-10 bg-white px-6 py-2 rounded-full shadow-sm border border-gray-200">
+                        <span class="font-semibold text-neutral">2026年3月14日</span>
+                    </div>
+                </div>
+
+                <!-- Items Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div class="space-y-8 md:pr-12">
+                        <!-- 华为畅享90系列 -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="phone" data-date="2026-03-14">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <span class="category-badge phone-badge mb-2 inline-block">手机</span>
+                                    <h3 class="text-xl font-bold text-neutral">华为 畅享90 Plus / 90 Pro Max</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm text-gray-500">13:12</span>
+                                    <div class="mt-1">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>海思麒麟8系芯片</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-battery-three-quarters text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>巨鲸大电池，续航能力突出</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>3月23日开启全款预售</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-paint-brush text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>Plus版：矩形模组设计 | Pro Max版：圆形模组设计</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fa fa-link mr-2"></i>
+                                    <span>信息来源：IT之家</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OPPO Pad 5 Pro -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="tablet" data-date="2026-03-14">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <span class="category-badge tablet-badge mb-2 inline-block">平板</span>
+                                    <h3 class="text-xl font-bold text-neutral">OPPO Pad 5 Pro</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm text-gray-500">11:15</span>
+                                    <div class="mt-1">
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">爆料</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>骁龙8 Elite Gen 5芯片</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>13.2英寸超大屏幕</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-battery-three-quarters text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>典型值13000mAh±大容量电池</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>预计4月发布，或与Find X9U一同亮相</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fa fa-link mr-2"></i>
+                                    <span>信息来源：数码闲聊站</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AOC 爱攻7 Pro显示器 -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="peripheral" data-date="2026-03-14">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <span class="category-badge peripheral-badge mb-2 inline-block">外设</span>
+                                    <h3 class="text-xl font-bold text-neutral">AOC 爱攻7 Pro AGP277KX 显示器</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm text-gray-500">13:28</span>
+                                    <div class="mt-1">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>27英寸双模FastIPS面板</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-refresh text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>支持一键切换：5K@180Hz / 2K@350Hz</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-certificate text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>通过DisplayHDR 400认证</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-money text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>售价5999元</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fa fa-link mr-2"></i>
+                                    <span>信息来源：IT之家</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-8 md:pl-12 md:mt-16">
+                        <!-- 三星阔折叠新机 -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="phone" data-date="2026-03-14">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <span class="category-badge phone-badge mb-2 inline-block">手机</span>
+                                    <h3 class="text-xl font-bold text-neutral">三星 阔折叠新机</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm text-gray-500">15:24</span>
+                                    <div class="mt-1">
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">爆料</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>7.6英寸内折叠大屏</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>骁龙8 Elite Gen 5（8E5）处理器</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-battery-three-quarters text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>双电芯典型值4800mAh±电池</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-arrows-h text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>或采用横向优先设计</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fa fa-link mr-2"></i>
+                                    <span>信息来源：数码闲聊站</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 联想Yoga Slim 7a -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="laptop" data-date="2026-03-14">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <span class="category-badge laptop-badge mb-2 inline-block">笔记本</span>
+                                    <h3 class="text-xl font-bold text-neutral">联想 Yoga Slim 7a</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm text-gray-500">10:49</span>
+                                    <div class="mt-1">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">海外上市</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>AMD Gorgon Point处理器</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>14英寸1100尼特OLED面板</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-money text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>起售价1160欧元（约合人民币9171元）</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>预计3月23日开售</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fa fa-link mr-2"></i>
+                                    <span>信息来源：IT之家</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OPPO 磁吸小涡轮2代 -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="peripheral" data-date="2026-03-14">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <span class="category-badge peripheral-badge mb-2 inline-block">外设</span>
+                                    <h3 class="text-xl font-bold text-neutral">OPPO 磁吸小涡轮2代 50W无线充电器</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm text-gray-500">17:41</span>
+                                    <div class="mt-1">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-start">
+                                    <i class="fa fa-bolt text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>50W无线快充</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-cog text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>内置360°桌面支架，悬浮式设计</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-snowflake-o text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>支持清凉充/静音充/仅散热三种模式</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
+                                    <span>3月17日19:00全球首发</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fa fa-link mr-2"></i>
+                                    <span>信息来源：IT之家</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="container mx-auto px-4 py-8">
+            <div class="text-center text-gray-600">
+                <p>📱 数码新品参数时间线 - 每日18:00自动更新</p>
+                <p class="text-sm mt-2">数据来源：中关村在线、京东、IT之家、数码博主公开信息</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 过滤功能
+        const categoryFilter = document.getElementById('categoryFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const items = document.querySelectorAll('[data-category]');
+
+        function filterItems() {
+            const selectedCategory = categoryFilter.value;
+            const selectedDate = dateFilter.value;
+            
+            let visibleCount = 0;
+            let phoneCount = 0;
+            let laptopCount = 0;
+            let tabletCount = 0;
+            let peripheralCount = 0;
+
+            items.forEach(item => {
+                const category = item.dataset.category;
+                const date = item.dataset.date;
+                
+                const categoryMatch = selectedCategory === 'all' || category === selectedCategory;
+                const dateMatch = selectedDate === 'all' || date === selectedDate;
+                
+                if (categoryMatch && dateMatch) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                    
+                    switch(category) {
+                        case 'phone': phoneCount++; break;
+                        case 'laptop': laptopCount++; break;
+                        case 'tablet': tabletCount++; break;
+                        case 'peripheral': peripheralCount++; break;
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // 更新统计数据
+            document.getElementById('totalCount').textContent = visibleCount;
+            document.getElementById('phoneCount').textContent = phoneCount;
+            document.getElementById('laptopCount').textContent = laptopCount + tabletCount;
+            document.getElementById('peripheralCount').textContent = peripheralCount;
+        }
+
+        categoryFilter.addEventListener('change', filterItems);
+        dateFilter.addEventListener('change', filterItems);
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
