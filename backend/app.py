@@ -195,11 +195,12 @@ def add_product():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    if path != "" and os.path.exists(f'frontend/{path}'):
-        return send_from_directory('frontend', path)
+    frontend_path = '/root/digital-timeline/frontend'
+    if path != '' and os.path.exists(os.path.join(frontend_path, path)):
+        return send_from_directory(frontend_path, path)
     else:
-        return send_from_directory('frontend', 'index.html')
+        return send_from_directory(frontend_path, 'index.html')
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=80, debug=False)
