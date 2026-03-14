@@ -158,49 +158,41 @@ def get_stats():
         'today_new': today_new
     })
 
-@app.route('/api/products', methods=['POST'])
-def add_product():
-    data = request.json
-    
-    required_fields = ['brand', 'name', 'category', 'parameters', 'status', 'release_date', 'source']
-    for field in required_fields:
-        if field not in data:
-            return jsonify({'error': f'Missing field: {field}'}), 400
-    
-    try:
-        with DB() as c:
-            c.execute('''INSERT OR IGNORE INTO products 
-                         (brand, name, category, parameters, status, release_date, source, created_at)
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                      (data['brand'],
-                       data['name'],
-                       data['category'],
-                       json.dumps(data['parameters'], ensure_ascii=False),
-                       data['status'],
-                       data['release_date'],
-                       data['source'],
-                       datetime.now().isoformat()))
-            
-            if c.rowcount == 0:
-                return jsonify({'message': 'Product already exists'}), 200
-            
-            product_id = c.lastrowid
+@app.route('/api/products/<int:product_id>', methods=['GET'])
+def get_product_detail(product_id):
+    with DB() as c:
+        c.execute('SELECT * FROM products WHERE id = ?', (product_id,))
+        product = c.fetchone()
+        if not product:
+            return jsonify({'error': 'Product not found'}), 404
         
-        return jsonify({'id': product_id, 'message': 'Product added successfully'}), 201
-    
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        product = dict(product)
+        product['parameters'] = json.loads(product['parameters'])
+        
+        # 获取同系列/同品牌推荐
+        c.execute('''SELECT id, brand, name, category, release_date 
+                     FROM products 
+                     WHERE brand = ? AND id != ? 
+                     ORDER BY release_date DESC 
+                     LIMIT 3''', (product['brand'], product_id))
+        related = [dict(row) for row in c.fetchall()]
+        
+        return jsonify({
+            'product': product,
+            'related': related
+        })
 
 # 静态文件服务
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
     frontend_path = '/root/digital-timeline/frontend'
-    if path != '' and os.path.exists(os.path.join(frontend_path, path)):
+    if path !=  and os.path.exists(os.path.join(frontend_path, path)):
         return send_from_directory(frontend_path, path)
     else:
         return send_from_directory(frontend_path, 'index.html')
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=80, debug=False)
+    print('🚀 服务启动在 http://0.0.0.0:6000')
+    app.run(host='0.0.0.0', port=6000, debug=False)
