@@ -397,7 +397,7 @@
                 const category = categoryFilter.value;
                 const date = dateFilter.value;
                 
-                const url = `${API_BASE}/api/products?page=${currentPage}&per_page=${per_page}${category !== 'all' ? '&category=' + category : ''}${date !== 'all' ? '&date=' + date : ''}`;
+                const url = `${API_BASE}/api/products?page=${currentPage}&per_page=${perPage}${category !== 'all' ? '&category=' + category : ''}${date !== 'all' ? '&date=' + date : ''}`;
                 
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Network response was not ok');
