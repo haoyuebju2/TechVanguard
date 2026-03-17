@@ -199,8 +199,8 @@
     </footer>
 
     <script>
-        // API 配置
-        const API_BASE = window.location.port === '6000' ? '' : 'http://110.40.139.245:6000';
+        // API 配置 - 根据当前端口自动选择
+        const API_BASE = window.location.port === '6000' || window.location.port === '' ? '' : `http://110.40.139.245:6000`;
         
         // 状态管理
         let currentPage = 1;
