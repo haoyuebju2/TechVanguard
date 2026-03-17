@@ -68,6 +68,18 @@
             .peripheral-badge {
                 @apply bg-orange-100 text-orange-800;
             }
+            .loading-spinner {
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid #3b82f6;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
         }
     </style>
 </head>
@@ -90,7 +102,6 @@
                     </select>
                     <select id="dateFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="all">全部日期</option>
-                        <option value="2026-03-14">2026-03-14</option>
                     </select>
                 </div>
             </div>
@@ -105,8 +116,8 @@
             <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-500 text-sm">今日新品总数</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="totalCount">10</p>
+                        <p class="text-gray-500 text-sm">累计产品总数</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="totalCount">0</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fa fa-calendar-check-o text-primary text-xl"></i>
@@ -117,7 +128,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">手机类</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="phoneCount">3</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="phoneCount">0</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                         <i class="fa fa-mobile text-blue-600 text-2xl"></i>
@@ -128,7 +139,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">电脑/平板类</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="laptopCount">3</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="laptopCount">0</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                         <i class="fa fa-laptop text-purple-600 text-xl"></i>
@@ -139,7 +150,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">外设类</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="peripheralCount">4</p>
+                        <p class="text-3xl font-bold text-neutral mt-1" id="peripheralCount">0</p>
                     </div>
                     <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
                         <i class="fa fa-keyboard-o text-orange-600 text-xl"></i>
@@ -148,269 +159,32 @@
             </div>
         </div>
 
-        <!-- Timeline -->
-        <div class="relative">
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="flex justify-center py-8">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Timeline Container -->
+        <div id="timelineContainer" class="relative hidden">
             <div class="timeline-line"></div>
-            
-            <!-- 2026-03-14 -->
-            <div class="mb-16">
-                <!-- Date Marker -->
-                <div class="relative mb-12">
-                    <div class="timeline-dot"></div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 -top-10 bg-white px-6 py-2 rounded-full shadow-sm border border-gray-200">
-                        <span class="font-semibold text-neutral">2026年3月14日</span>
-                    </div>
-                </div>
+            <!-- Products will be inserted here -->
+        </div>
 
-                <!-- Items Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Left Column -->
-                    <div class="space-y-8 md:pr-12">
-                        <!-- 华为畅享90系列 -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="phone" data-date="2026-03-14">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <span class="category-badge phone-badge mb-2 inline-block">手机</span>
-                                    <h3 class="text-xl font-bold text-neutral">华为 畅享90 Plus / 90 Pro Max</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm text-gray-500">13:12</span>
-                                    <div class="mt-1">
-                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3 text-gray-700">
-                                <div class="flex items-start">
-                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>海思麒麟8系芯片</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-battery-three-quarters text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>巨鲸大电池，续航能力突出</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>3月23日开启全款预售</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-paint-brush text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>Plus版：矩形模组设计 | Pro Max版：圆形模组设计</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-link mr-2"></i>
-                                    <span>信息来源：IT之家</span>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Load More / End Message -->
+        <div id="loadMoreTrigger" class="flex justify-center py-8 hidden">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <div id="endMessage" class="text-center py-8 text-gray-500 hidden">
+            <i class="fa fa-check-circle text-green-500 text-xl mr-2"></i>
+            已加载全部产品
+        </div>
 
-                        <!-- OPPO Pad 5 Pro -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="tablet" data-date="2026-03-14">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <span class="category-badge tablet-badge mb-2 inline-block">平板</span>
-                                    <h3 class="text-xl font-bold text-neutral">OPPO Pad 5 Pro</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm text-gray-500">11:15</span>
-                                    <div class="mt-1">
-                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">爆料</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3 text-gray-700">
-                                <div class="flex items-start">
-                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>骁龙8 Elite Gen 5芯片</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>13.2英寸超大屏幕</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-battery-three-quarters text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>典型值13000mAh±大容量电池</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>预计4月发布，或与Find X9U一同亮相</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-link mr-2"></i>
-                                    <span>信息来源：数码闲聊站</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- AOC 爱攻7 Pro显示器 -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="peripheral" data-date="2026-03-14">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <span class="category-badge peripheral-badge mb-2 inline-block">外设</span>
-                                    <h3 class="text-xl font-bold text-neutral">AOC 爱攻7 Pro AGP277KX 显示器</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm text-gray-500">13:28</span>
-                                    <div class="mt-1">
-                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3 text-gray-700">
-                                <div class="flex items-start">
-                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>27英寸双模FastIPS面板</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-refresh text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>支持一键切换：5K@180Hz / 2K@350Hz</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-certificate text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>通过DisplayHDR 400认证</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-money text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>售价5999元</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-link mr-2"></i>
-                                    <span>信息来源：IT之家</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="space-y-8 md:pl-12 md:mt-16">
-                        <!-- 三星阔折叠新机 -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="phone" data-date="2026-03-14">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <span class="category-badge phone-badge mb-2 inline-block">手机</span>
-                                    <h3 class="text-xl font-bold text-neutral">三星 阔折叠新机</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm text-gray-500">15:24</span>
-                                    <div class="mt-1">
-                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">爆料</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3 text-gray-700">
-                                <div class="flex items-start">
-                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>7.6英寸内折叠大屏</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>骁龙8 Elite Gen 5（8E5）处理器</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-battery-three-quarters text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>双电芯典型值4800mAh±电池</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-arrows-h text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>或采用横向优先设计</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-link mr-2"></i>
-                                    <span>信息来源：数码闲聊站</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 联想Yoga Slim 7a -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="laptop" data-date="2026-03-14">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <span class="category-badge laptop-badge mb-2 inline-block">笔记本</span>
-                                    <h3 class="text-xl font-bold text-neutral">联想 Yoga Slim 7a</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm text-gray-500">10:49</span>
-                                    <div class="mt-1">
-                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">海外上市</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3 text-gray-700">
-                                <div class="flex items-start">
-                                    <i class="fa fa-microchip text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>AMD Gorgon Point处理器</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-desktop text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>14英寸1100尼特OLED面板</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-money text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>起售价1160欧元（约合人民币9171元）</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>预计3月23日开售</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-link mr-2"></i>
-                                    <span>信息来源：IT之家</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- OPPO 磁吸小涡轮2代 -->
-                        <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="peripheral" data-date="2026-03-14">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <span class="category-badge peripheral-badge mb-2 inline-block">外设</span>
-                                    <h3 class="text-xl font-bold text-neutral">OPPO 磁吸小涡轮2代 50W无线充电器</h3>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-sm text-gray-500">17:41</span>
-                                    <div class="mt-1">
-                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3 text-gray-700">
-                                <div class="flex items-start">
-                                    <i class="fa fa-bolt text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>50W无线快充</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-cog text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>内置360°桌面支架，悬浮式设计</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-snowflake-o text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>支持清凉充/静音充/仅散热三种模式</span>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-calendar text-primary mt-1 mr-3 w-4 text-center"></i>
-                                    <span>3月17日19:00全球首发</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-100">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fa fa-link mr-2"></i>
-                                    <span>信息来源：IT之家</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Error Message -->
+        <div id="errorMessage" class="text-center py-8 text-red-500 hidden">
+            <i class="fa fa-exclamation-circle text-xl mr-2"></i>
+            <span id="errorText">加载失败</span>
+            <button onclick="loadProducts()" class="ml-2 text-primary hover:underline">重试</button>
         </div>
     </main>
 
@@ -425,62 +199,289 @@
     </footer>
 
     <script>
-        // 过滤功能
+        // API 配置
+        const API_BASE = window.location.port === '6000' ? '' : 'http://110.40.139.245:6000';
+        
+        // 状态管理
+        let currentPage = 1;
+        let perPage = 20;
+        let isLoading = false;
+        let hasMore = true;
+        let allProducts = [];
+        let filteredProducts = [];
+        
+        // DOM 元素
+        const timelineContainer = document.getElementById('timelineContainer');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const loadMoreTrigger = document.getElementById('loadMoreTrigger');
+        const endMessage = document.getElementById('endMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
         const categoryFilter = document.getElementById('categoryFilter');
         const dateFilter = document.getElementById('dateFilter');
-        const items = document.querySelectorAll('[data-category]');
 
-        function filterItems() {
-            const selectedCategory = categoryFilter.value;
-            const selectedDate = dateFilter.value;
-            
-            let visibleCount = 0;
-            let phoneCount = 0;
-            let laptopCount = 0;
-            let tabletCount = 0;
-            let peripheralCount = 0;
-
-            items.forEach(item => {
-                const category = item.dataset.category;
-                const date = item.dataset.date;
-                
-                const categoryMatch = selectedCategory === 'all' || category === selectedCategory;
-                const dateMatch = selectedDate === 'all' || date === selectedDate;
-                
-                if (categoryMatch && dateMatch) {
-                    item.style.display = 'block';
-                    visibleCount++;
-                    
-                    switch(category) {
-                        case 'phone': phoneCount++; break;
-                        case 'laptop': laptopCount++; break;
-                        case 'tablet': tabletCount++; break;
-                        case 'peripheral': peripheralCount++; break;
-                    }
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-
-            // 更新统计数据
-            document.getElementById('totalCount').textContent = visibleCount;
-            document.getElementById('phoneCount').textContent = phoneCount;
-            document.getElementById('laptopCount').textContent = laptopCount + tabletCount;
-            document.getElementById('peripheralCount').textContent = peripheralCount;
+        // 格式化日期
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}年${month}月${day}日`;
         }
 
-        categoryFilter.addEventListener('change', filterItems);
-        dateFilter.addEventListener('change', filterItems);
+        // 格式化时间
+        function formatTime(dateStr) {
+            const date = new Date(dateStr);
+            return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
 
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+        // 获取状态标签
+        function getStatusBadge(status) {
+            const statusMap = {
+                '在售': '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">在售</span>',
+                '预售': '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">预售</span>',
+                '预约中': '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>',
+                '爆料': '<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">爆料</span>'
+            };
+            return statusMap[status] || `<span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">${status}</span>`;
+        }
+
+        // 获取品类标签
+        function getCategoryBadge(category) {
+            const categoryMap = {
+                'phone': '<span class="category-badge phone-badge">手机</span>',
+                'laptop': '<span class="category-badge laptop-badge">笔记本</span>',
+                'tablet': '<span class="category-badge tablet-badge">平板</span>',
+                'peripheral': '<span class="category-badge peripheral-badge">外设</span>'
+            };
+            return categoryMap[category] || '';
+        }
+
+        // 渲染产品卡片
+        function renderProductCard(product, isLeft) {
+            const alignClass = isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12';
+            const params = product.parameters || {};
+            
+            let paramsHtml = '';
+            for (const [key, value] of Object.entries(params)) {
+                const icons = {
+                    'chip': 'fa-microchip',
+                    'screen': 'fa-desktop',
+                    'battery': 'fa-battery-three-quarters',
+                    'memory': 'fa-memory',
+                    'storage': 'fa-hdd-o',
+                    'price': 'fa-tag',
+                    'refresh_rate': 'fa-tachometer',
+                    'power': 'fa-bolt',
+                    'design': 'fa-paint-brush'
+                };
+                const icon = icons[key] || 'fa-cog';
+                paramsHtml += `
+                    <div class="flex items-start ${isLeft ? 'md:flex-row-reverse' : ''}">
+                        <i class="fa ${icon} text-primary mt-1 mr-3 w-4 text-center"></i>
+                        <span>${value}</span>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="${product.category}" data-date="${product.release_date.split('T')[0]}">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            ${getCategoryBadge(product.category)}
+                            <h3 class="text-xl font-bold text-neutral mt-2">${product.brand} ${product.name}</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-gray-500">${formatTime(product.release_date)}</span>
+                            <div class="mt-1">
+                                ${getStatusBadge(product.status)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3 text-gray-700 ${alignClass}">
+                        ${paramsHtml}
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fa fa-link mr-2"></i>
+                            <span>信息来源：${product.source}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 按日期分组渲染产品
+        function renderProducts(products) {
+            if (products.length === 0) {
+                timelineContainer.innerHTML = '<div class="text-center py-12 text-gray-500">暂无产品数据</div>';
+                return;
+            }
+
+            // 按日期分组
+            const grouped = {};
+            products.forEach(product => {
+                const date = product.release_date.split('T')[0];
+                if (!grouped[date]) {
+                    grouped[date] = [];
+                }
+                grouped[date].push(product);
             });
-        });
+
+            // 按日期倒序排列
+            const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+
+            let html = '';
+            let globalIndex = 0;
+            
+            sortedDates.forEach(date => {
+                const productsInDate = grouped[date];
+                
+                html += `
+                    <div class="mb-16" data-date="${date}">
+                        <div class="relative mb-12">
+                            <div class="timeline-dot"></div>
+                            <div class="absolute left-1/2 transform -translate-x-1/2 -top-10 bg-white px-6 py-2 rounded-full shadow-sm border border-gray-200">
+                                <span class="font-semibold text-neutral">${formatDate(date)}</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                `;
+
+                productsInDate.forEach((product, idx) => {
+                    const isLeft = idx % 2 === 0;
+                    html += `
+                        <div class="${isLeft ? 'md:pr-12' : 'md:pl-12'}">
+                            ${renderProductCard(product, isLeft)}
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+                globalIndex++;
+            });
+
+            timelineContainer.innerHTML = html;
+        }
+
+        // 更新统计
+        function updateStats(products) {
+            const total = products.length;
+            const phone = products.filter(p => p.category === 'phone').length;
+            const laptop = products.filter(p => p.category === 'laptop').length;
+            const tablet = products.filter(p => p.category === 'tablet').length;
+            const peripheral = products.filter(p => p.category === 'peripheral').length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('phoneCount').textContent = phone;
+            document.getElementById('laptopCount').textContent = laptop + tablet;
+            document.getElementById('peripheralCount').textContent = peripheral;
+        }
+
+        // 从API加载数据
+        async function loadProducts(reset = false) {
+            if (isLoading) return;
+            
+            if (reset) {
+                currentPage = 1;
+                allProducts = [];
+                hasMore = true;
+            }
+
+            isLoading = true;
+            loadingSpinner.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            endMessage.classList.add('hidden');
+
+            try {
+                const category = categoryFilter.value;
+                const date = dateFilter.value;
+                
+                const url = `${API_BASE}/api/products?page=${currentPage}&per_page=${per_page}${category !== 'all' ? '&category=' + category : ''}${date !== 'all' ? '&date=' + date : ''}`;
+                
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                
+                if (reset) {
+                    allProducts = data.products || [];
+                } else {
+                    allProducts = [...allProducts, ...(data.products || [])];
+                }
+
+                const pagination = data.pagination || {};
+                hasMore = pagination.page < pagination.total_pages;
+                
+                // 渲染
+                renderProducts(allProducts);
+                updateStats(allProducts);
+                
+                // 显示时间线
+                timelineContainer.classList.remove('hidden');
+
+                // 显示加载更多或结束
+                if (hasMore) {
+                    loadMoreTrigger.classList.remove('hidden');
+                    endMessage.classList.add('hidden');
+                } else {
+                    loadMoreTrigger.classList.add('hidden');
+                    endMessage.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error('Load error:', error);
+                errorText.textContent = error.message || '加载失败';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                isLoading = false;
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        // 加载日期筛选选项
+        async function loadDateOptions() {
+            try {
+                const response = await fetch(`${API_BASE}/api/dates`);
+                const data = await response.json();
+                
+                const dates = data.dates || [];
+                let html = '<option value="all">全部日期</option>';
+                dates.forEach(date => {
+                    html += `<option value="${date}">${formatDate(date)}</option>`;
+                });
+                dateFilter.innerHTML = html;
+            } catch (error) {
+                console.error('Load dates error:', error);
+            }
+        }
+
+        // 无限滚动
+        function setupInfiniteScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && hasMore && !isLoading) {
+                        currentPage++;
+                        loadProducts(false);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            observer.observe(loadMoreTrigger);
+        }
+
+        // 筛选变化
+        categoryFilter.addEventListener('change', () => loadProducts(true));
+        dateFilter.addEventListener('change', () => loadProducts(true));
+
+        // 初始化
+        async function init() {
+            await loadDateOptions();
+            await loadProducts(true);
+            setupInfiniteScroll();
+        }
+
+        init();
     </script>
 </body>
 </html>
