@@ -3,214 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数码新品参数时间线</title>
+    <title>数码新品时间线 | TechVanguard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3b82f6',
-                        secondary: '#8b5cf6',
-                        accent: '#ec4899',
-                        neutral: '#1f2937',
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        dark: '#0f172a',
+                        glass: 'rgba(255, 255, 255, 0.1)',
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-soft': 'pulseSoft 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.7' },
+                        },
                     },
                 }
             }
         }
     </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .timeline-line {
-                content: '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                transform: translateX(-50%);
-                width: 4px;
-                height: 100%;
-                background: linear-gradient(to bottom, #3b82f6 0%, #8b5cf6 100%);
-            }
-            .timeline-dot {
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                background: white;
-                border: 4px solid #3b82f6;
-                z-index: 10;
-            }
-            .card-hover {
-                transition: all 0.3s ease;
-            }
-            .card-hover:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            }
-            .category-badge {
-                @apply px-3 py-1 rounded-full text-xs font-semibold;
-            }
-            .phone-badge {
-                @apply bg-blue-100 text-blue-800;
-            }
-            .laptop-badge {
-                @apply bg-purple-100 text-purple-800;
-            }
-            .tablet-badge {
-                @apply bg-green-100 text-green-800;
-            }
-            .peripheral-badge {
-                @apply bg-orange-100 text-orange-800;
-            }
-            .loading-spinner {
-                border: 3px solid #f3f3f3;
-                border-top: 3px solid #3b82f6;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                animation: spin 1s linear infinite;
-            }
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
+    <style>
+        * {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        
+        /* 玻璃拟态效果 */
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 时间轴样式 */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            border: 3px solid #0f172a;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+        }
+        
+        .timeline-dot::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.2);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
+        
+        /* 日期标记 */
+        .date-badge {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+        
+        /* 品类标签 */
+        .category-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .tag-phone {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .tag-laptop {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+        }
+        
+        .tag-tablet {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .tag-peripheral {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        /* 状态标签 */
+        .status-tag {
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-sale { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .status-reserve { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-pre { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .status-leak { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        
+        /* 参数项 */
+        .param-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .param-item i {
+            color: #38bdf8;
+            margin-top: 2px;
+        }
+        
+        /* 加载动画 */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(56, 189, 248, 0.2);
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.5);
+        }
+        
+        /* 筛选框 */
+        .custom-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .custom-select:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+        
+        .custom-select:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+        
+        .custom-select option {
+            background: #1e293b;
+            color: white;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fa fa-microchip text-primary text-3xl"></i>
-                    <h1 class="text-3xl font-bold text-neutral">数码新品参数时间线</h1>
+<body class="text-white">
+    <!-- Hero Header -->
+    <header class="relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <!-- Logo & Title -->
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                        <i class="fa fa-microchip text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            数码新品时间线
+                        </h1>
+                        <p class="text-sm text-slate-400 mt-1">追踪最新科技产品的发布动态</p>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                        <option value="all">全部品类</option>
-                        <option value="phone">手机</option>
-                        <option value="laptop">笔记本电脑</option>
-                        <option value="tablet">平板</option>
-                        <option value="peripheral">外设</option>
+                
+                <!-- Filters -->
+                <div class="flex items-center gap-3">
+                    <select id="categoryFilter" class="custom-select">
+                        <option value="all">📱 全部品类</option>
+                        <option value="phone">📱 手机</option>
+                        <option value="laptop">💻 笔记本</option>
+                        <option value="tablet">📲 平板</option>
+                        <option value="peripheral">⌨️ 外设</option>
                     </select>
-                    <select id="dateFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                        <option value="all">全部日期</option>
+                    <select id="dateFilter" class="custom-select">
+                        <option value="all">📅 全部日期</option>
                     </select>
                 </div>
             </div>
-            <p class="text-gray-600 mt-2">每日更新最新数码产品发布信息，包含手机、电脑、平板、外设等全品类参数</p>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">累计产品总数</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="totalCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fa fa-calendar-check-o text-primary text-xl"></i>
-                    </div>
-                </div>
+    <!-- Stats Cards -->
+    <main class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <div class="text-4xl font-bold text-cyan-400" id="totalCount">0</div>
+                <div class="text-sm text-slate-400 mt-2">累计产品</div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">手机类</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="phoneCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fa fa-mobile text-blue-600 text-2xl"></i>
-                    </div>
-                </div>
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <div class="text-4xl font-bold text-blue-400" id="phoneCount">0</div>
+                <div class="text-sm text-slate-400 mt-2">📱 手机</div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">电脑/平板类</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="laptopCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fa fa-laptop text-purple-600 text-xl"></i>
-                    </div>
-                </div>
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <div class="text-4xl font-bold text-purple-400" id="laptopCount">0</div>
+                <div class="text-sm text-slate-400 mt-2">💻 电脑/平板</div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">外设类</p>
-                        <p class="text-3xl font-bold text-neutral mt-1" id="peripheralCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                        <i class="fa fa-keyboard-o text-orange-600 text-xl"></i>
-                    </div>
-                </div>
+            <div class="glass-card rounded-2xl p-5 text-center">
+                <div class="text-4xl font-bold text-amber-400" id="peripheralCount">0</div>
+                <div class="text-sm text-slate-400 mt-2">⌨️ 外设</div>
             </div>
         </div>
 
-        <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="flex justify-center py-8">
+        <!-- Loading -->
+        <div id="loadingSpinner" class="flex justify-center py-16">
             <div class="loading-spinner"></div>
         </div>
 
-        <!-- Timeline Container -->
+        <!-- Timeline -->
         <div id="timelineContainer" class="relative hidden">
             <div class="timeline-line"></div>
-            <!-- Products will be inserted here -->
         </div>
 
-        <!-- Load More / End Message -->
+        <!-- Load More -->
         <div id="loadMoreTrigger" class="flex justify-center py-8 hidden">
             <div class="loading-spinner"></div>
         </div>
         
-        <div id="endMessage" class="text-center py-8 text-gray-500 hidden">
-            <i class="fa fa-check-circle text-green-500 text-xl mr-2"></i>
+        <div id="endMessage" class="text-center py-8 text-slate-500 hidden">
+            <i class="fa fa-check-circle text-green-400 text-xl mr-2"></i>
             已加载全部产品
         </div>
 
-        <!-- Error Message -->
-        <div id="errorMessage" class="text-center py-8 text-red-500 hidden">
+        <!-- Error -->
+        <div id="errorMessage" class="text-center py-8 text-red-400 hidden">
             <i class="fa fa-exclamation-circle text-xl mr-2"></i>
             <span id="errorText">加载失败</span>
-            <button onclick="loadProducts()" class="ml-2 text-primary hover:underline">重试</button>
+            <button onclick="loadProducts()" class="ml-2 text-cyan-400 hover:underline">重试</button>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-        <div class="container mx-auto px-4 py-8">
-            <div class="text-center text-gray-600">
-                <p>📱 数码新品参数时间线 - 每日18:00自动更新</p>
-                <p class="text-sm mt-2">数据来源：中关村在线、京东、IT之家、数码博主公开信息</p>
-            </div>
+    <footer class="glass mt-16">
+        <div class="container mx-auto px-4 py-6 text-center">
+            <p class="text-slate-400 text-sm">
+                <i class="fa fa-refresh mr-2 text-cyan-400"></i>
+                每日18:00自动更新 · 数据来源：IT之家、数码闲聊站、官方公告
+            </p>
         </div>
     </footer>
 
     <script>
-        // API 配置 - 根据当前端口自动选择
+        // API 配置
         const API_BASE = window.location.port === '6000' || window.location.port === '' ? '' : `http://110.40.139.245:6000`;
         
-        // 状态管理
+        // 状态
         let currentPage = 1;
         let perPage = 20;
         let isLoading = false;
         let hasMore = true;
         let allProducts = [];
-        let filteredProducts = [];
         
-        // DOM 元素
+        // DOM
         const timelineContainer = document.getElementById('timelineContainer');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const loadMoreTrigger = document.getElementById('loadMoreTrigger');
@@ -220,16 +373,12 @@
         const categoryFilter = document.getElementById('categoryFilter');
         const dateFilter = document.getElementById('dateFilter');
 
-        // 格式化日期
+        // 工具函数
         function formatDate(dateStr) {
             const date = new Date(dateStr);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}年${month}月${day}日`;
+            return `${date.getFullYear()}年${String(date.getMonth() + 1).padStart(2, '0')}月${String(date.getDate()).padStart(2, '0')}日`;
         }
 
-        // 格式化时间
         function formatTime(dateStr) {
             const date = new Date(dateStr);
             return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
@@ -237,84 +386,80 @@
 
         // 获取状态标签
         function getStatusBadge(status) {
-            const statusMap = {
-                '在售': '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">在售</span>',
-                '预售': '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">预售</span>',
-                '预约中': '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">预约中</span>',
-                '爆料': '<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">爆料</span>'
+            const map = {
+                '在售': '<span class="status-tag status-sale">在售</span>',
+                '预售': '<span class="status-tag status-pre">预售</span>',
+                '预约中': '<span class="status-tag status-reserve">预约中</span>',
+                '爆料': '<span class="status-tag status-leak">爆料</span>'
             };
-            return statusMap[status] || `<span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">${status}</span>`;
+            return map[status] || `<span class="status-tag" style="background:rgba(255,255,255,0.1);color:#fff">${status}</span>`;
         }
 
         // 获取品类标签
         function getCategoryBadge(category) {
-            const categoryMap = {
-                'phone': '<span class="category-badge phone-badge">手机</span>',
-                'laptop': '<span class="category-badge laptop-badge">笔记本</span>',
-                'tablet': '<span class="category-badge tablet-badge">平板</span>',
-                'peripheral': '<span class="category-badge peripheral-badge">外设</span>'
+            const map = {
+                'phone': '<span class="category-tag tag-phone"><i class="fa fa-mobile mr-1"></i>手机</span>',
+                'laptop': '<span class="category-tag tag-laptop"><i class="fa fa-laptop mr-1"></i>笔记本</span>',
+                'tablet': '<span class="category-tag tag-tablet"><i class="fa fa-tablet mr-1"></i>平板</span>',
+                'peripheral': '<span class="category-tag tag-peripheral"><i class="fa fa-keyboard-o mr-1"></i>外设</span>'
             };
-            return categoryMap[category] || '';
+            return map[category] || '';
         }
 
         // 渲染产品卡片
         function renderProductCard(product, isLeft) {
-            const alignClass = isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12';
             const params = product.parameters || {};
+            const iconMap = {
+                'chip': 'fa-microchip',
+                'screen': 'fa-desktop',
+                'battery': 'fa-battery-three-quarters',
+                'memory': 'fa-memory',
+                'storage': 'fa-hdd-o',
+                'price': 'fa-tag',
+                'refresh_rate': 'fa-tachometer',
+                'power': 'fa-bolt',
+                'design': 'fa-paint-brush',
+                'gpu': 'fa-object-group',
+                'camera': 'fa-camera',
+                'stylus': 'fa-pencil',
+                'pen': 'fa-pen',
+            };
             
             let paramsHtml = '';
             for (const [key, value] of Object.entries(params)) {
-                const icons = {
-                    'chip': 'fa-microchip',
-                    'screen': 'fa-desktop',
-                    'battery': 'fa-battery-three-quarters',
-                    'memory': 'fa-memory',
-                    'storage': 'fa-hdd-o',
-                    'price': 'fa-tag',
-                    'refresh_rate': 'fa-tachometer',
-                    'power': 'fa-bolt',
-                    'design': 'fa-paint-brush'
-                };
-                const icon = icons[key] || 'fa-cog';
-                paramsHtml += `
-                    <div class="flex items-start ${isLeft ? 'md:flex-row-reverse' : ''}">
-                        <i class="fa ${icon} text-primary mt-1 mr-3 w-4 text-center"></i>
-                        <span>${value}</span>
-                    </div>
-                `;
+                const icon = iconMap[key] || 'fa-cog';
+                paramsHtml += `<div class="param-item"><i class="fa ${icon}"></i><span>${value}</span></div>`;
             }
 
             return `
-                <div class="bg-white rounded-xl shadow-sm p-6 card-hover" data-category="${product.category}" data-date="${product.release_date.split('T')[0]}">
+                <div class="glass-card rounded-xl p-5" data-category="${product.category}" data-date="${product.release_date.split('T')[0]}">
                     <div class="flex items-start justify-between mb-4">
                         <div>
                             ${getCategoryBadge(product.category)}
-                            <h3 class="text-xl font-bold text-neutral mt-2">${product.brand} ${product.name}</h3>
+                            <h3 class="text-lg font-semibold text-white mt-2">${product.brand} ${product.name}</h3>
                         </div>
                         <div class="text-right">
-                            <span class="text-sm text-gray-500">${formatTime(product.release_date)}</span>
-                            <div class="mt-1">
-                                ${getStatusBadge(product.status)}
-                            </div>
+                            <div class="text-sm text-slate-400">${formatTime(product.release_date)}</div>
+                            <div class="mt-2">${getStatusBadge(product.status)}</div>
                         </div>
                     </div>
-                    <div class="space-y-3 text-gray-700 ${alignClass}">
+                    <div class="space-y-1">
                         ${paramsHtml}
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-100">
-                        <div class="flex items-center text-sm text-gray-500">
+                    <div class="mt-4 pt-3 border-t border-white/10">
+                        <div class="flex items-center text-xs text-slate-500">
                             <i class="fa fa-link mr-2"></i>
-                            <span>信息来源：${product.source}</span>
+                            <span>${product.source}</span>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // 按日期分组渲染产品
+        // 渲染时间线
         function renderProducts(products) {
             if (products.length === 0) {
-                timelineContainer.innerHTML = '<div class="text-center py-12 text-gray-500">暂无产品数据</div>';
+                timelineContainer.innerHTML = '<div class="text-center py-16 text-slate-500">暂无产品数据</div>';
                 return;
             }
 
@@ -322,43 +467,30 @@
             const grouped = {};
             products.forEach(product => {
                 const date = product.release_date.split('T')[0];
-                if (!grouped[date]) {
-                    grouped[date] = [];
-                }
+                if (!grouped[date]) grouped[date] = [];
                 grouped[date].push(product);
             });
 
-            // 按日期倒序排列
             const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
-
             let html = '';
-            let globalIndex = 0;
             
             sortedDates.forEach(date => {
                 const productsInDate = grouped[date];
-                
                 html += `
                     <div class="mb-16" data-date="${date}">
                         <div class="relative mb-12">
                             <div class="timeline-dot"></div>
-                            <div class="absolute left-1/2 transform -translate-x-1/2 -top-10 bg-white px-6 py-2 rounded-full shadow-sm border border-gray-200">
-                                <span class="font-semibold text-neutral">${formatDate(date)}</span>
+                            <div class="date-badge">
+                                ${formatDate(date)}
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 `;
-
                 productsInDate.forEach((product, idx) => {
                     const isLeft = idx % 2 === 0;
-                    html += `
-                        <div class="${isLeft ? 'md:pr-12' : 'md:pl-12'}">
-                            ${renderProductCard(product, isLeft)}
-                        </div>
-                    `;
+                    html += `<div class="${isLeft ? 'md:pr-6' : 'md:pl-6'} animate-slide-up" style="animation-delay: ${idx * 0.1}s">${renderProductCard(product, isLeft)}</div>`;
                 });
-
                 html += '</div></div>';
-                globalIndex++;
             });
 
             timelineContainer.innerHTML = html;
@@ -366,19 +498,15 @@
 
         // 更新统计
         function updateStats(products) {
-            const total = products.length;
-            const phone = products.filter(p => p.category === 'phone').length;
+            document.getElementById('totalCount').textContent = products.length;
+            document.getElementById('phoneCount').textContent = products.filter(p => p.category === 'phone').length;
             const laptop = products.filter(p => p.category === 'laptop').length;
             const tablet = products.filter(p => p.category === 'tablet').length;
-            const peripheral = products.filter(p => p.category === 'peripheral').length;
-
-            document.getElementById('totalCount').textContent = total;
-            document.getElementById('phoneCount').textContent = phone;
             document.getElementById('laptopCount').textContent = laptop + tablet;
-            document.getElementById('peripheralCount').textContent = peripheral;
+            document.getElementById('peripheralCount').textContent = products.filter(p => p.category === 'peripheral').length;
         }
 
-        // 从API加载数据
+        // 加载数据
         async function loadProducts(reset = false) {
             if (isLoading) return;
             
@@ -396,7 +524,6 @@
             try {
                 const category = categoryFilter.value;
                 const date = dateFilter.value;
-                
                 const url = `${API_BASE}/api/products?page=${currentPage}&per_page=${perPage}${category !== 'all' ? '&category=' + category : ''}${date !== 'all' ? '&date=' + date : ''}`;
                 
                 const response = await fetch(url);
@@ -404,23 +531,14 @@
                 
                 const data = await response.json();
                 
-                if (reset) {
-                    allProducts = data.products || [];
-                } else {
-                    allProducts = [...allProducts, ...(data.products || [])];
-                }
-
+                allProducts = reset ? data.products : [...allProducts, ...(data.products || [])];
                 const pagination = data.pagination || {};
                 hasMore = pagination.page < pagination.total_pages;
                 
-                // 渲染
                 renderProducts(allProducts);
                 updateStats(allProducts);
-                
-                // 显示时间线
                 timelineContainer.classList.remove('hidden');
 
-                // 显示加载更多或结束
                 if (hasMore) {
                     loadMoreTrigger.classList.remove('hidden');
                     endMessage.classList.add('hidden');
@@ -428,9 +546,7 @@
                     loadMoreTrigger.classList.add('hidden');
                     endMessage.classList.remove('hidden');
                 }
-
             } catch (error) {
-                console.error('Load error:', error);
                 errorText.textContent = error.message || '加载失败';
                 errorMessage.classList.remove('hidden');
             } finally {
@@ -439,38 +555,33 @@
             }
         }
 
-        // 加载日期筛选选项
+        // 加载日期选项
         async function loadDateOptions() {
             try {
                 const response = await fetch(`${API_BASE}/api/dates`);
                 const data = await response.json();
-                
-                const dates = data.dates || [];
-                let html = '<option value="all">全部日期</option>';
-                dates.forEach(date => {
+                let html = '<option value="all">📅 全部日期</option>';
+                (data.dates || []).forEach(date => {
                     html += `<option value="${date}">${formatDate(date)}</option>`;
                 });
                 dateFilter.innerHTML = html;
-            } catch (error) {
-                console.error('Load dates error:', error);
+            } catch (e) {
+                console.error('Load dates error:', e);
             }
         }
 
         // 无限滚动
         function setupInfiniteScroll() {
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && hasMore && !isLoading) {
-                        currentPage++;
-                        loadProducts(false);
-                    }
-                });
+                if (entries[0].isIntersecting && hasMore && !isLoading) {
+                    currentPage++;
+                    loadProducts(false);
+                }
             }, { threshold: 0.1 });
-
             observer.observe(loadMoreTrigger);
         }
 
-        // 筛选变化
+        // 事件
         categoryFilter.addEventListener('change', () => loadProducts(true));
         dateFilter.addEventListener('change', () => loadProducts(true));
 
